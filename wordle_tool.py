@@ -121,13 +121,14 @@ def letter_position_stats(words):
             idx += 1
     return stats
 
-def sort_letter_position_stats(pos_stats, letters, count):
+def sort_letter_position_stats(pos_stats, letters, count, all=False):
     chars = [chr(x+65) for x in range(26)]
     l = list(zip(chars, letters, pos_stats))
     l.sort(key = lambda x: x[1], reverse=True)
     div = lambda x,y: x / y if y else 0
     for t in l:
-        print("{}: {: >6.2f}% -> {: >8.1f}{: >8.1f}{: >8.1f}{: >8.1f}{: >8.1f}".format(t[0], (t[1]/count)*100, div(t[2][0], t[1])*100, div(t[2][1],t[1])*100, div(t[2][2],t[1])*100, div(t[2][3],t[1])*100, div(t[2][4],t[1])*100))
+        if all or t[1] > 0:
+            print("{}: {: >6.2f}% -> {: >8.1f}{: >8.1f}{: >8.1f}{: >8.1f}{: >8.1f} {: >8}".format(t[0], (t[1]/count)*100, div(t[2][0], t[1])*100, div(t[2][1],t[1])*100, div(t[2][2],t[1])*100, div(t[2][3],t[1])*100, div(t[2][4],t[1])*100, "multi" if sum(t[2]) > t[1] else ''))
     print("total: {} words".format(count))
 
 def print_help():
@@ -141,7 +142,7 @@ Supported commands are:
     fpu [filt]  - filters out words without the letter. format ___x_
     fpk [filt]  - filters out words without letters in position. format _x___
     p           - prints all current words
-    ps          - prints stats on all current words
+    ps [all]    - prints stats on current words, omitting unused letters.
     undo        - undoes the previous command
     exit        - quit
     """)
@@ -199,7 +200,10 @@ if __name__ == '__main__':
         elif cmd == 'p':
             print_words(words)
         elif cmd == 'ps':
-            sort_letter_position_stats(letter_position_stats(words), letter_stats_uniq(words), len(words))
+            all = False
+            if len(args) == 1 and args[0] == 'all':
+                all = True
+            sort_letter_position_stats(letter_position_stats(words), letter_stats_uniq(words), len(words), all)
         elif cmd == 'undo':
             if previous_words == None:
                 print("No commands to undo!")
