@@ -15,7 +15,7 @@
 #
 import shlex
 
-def read_words(file_name = "12478 5letter words.txt"):
+def read_words(file_name = "dictionary.txt"):
     f = open(file_name, 'r')
     words = []
     for line in f:

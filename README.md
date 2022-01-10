@@ -23,6 +23,7 @@ The first thing you need to do is load a dictionary
 > load dictionary.txt
 > 
 ```
+If you use the included dictionary, you can also use `load` with no argument and it'll load "dictionary.txt"
 
 The `help` command will print out all the commands with a short description
 ```
