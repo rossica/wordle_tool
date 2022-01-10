@@ -133,7 +133,7 @@ The `p` command will print the current words
 ```
 
 #### Print Stats command
-The `ps` command will print the letter stats of the current words. It prints the frequency a letter appears at least once is a word, and also the frequency that letter appears in a given position in a word.
+The `ps` command will print the letter stats of the current words. It prints the frequency a letter appears at least once is a word, and also the frequency that letter appears in a given position in a word. By default, `ps` will omit letters that do not occur in any words. `ps all` will print those letters too.
 It is sorted from the most common letter, to the least common.
 ```
 > ps
