@@ -142,7 +142,7 @@ Supported commands are:
     fpu [filt]  - filters out words without the letter. format ___x_
     fpk [filt]  - filters out words without letters in position. format _x___
     p           - prints all current words
-    ps [all]    - prints stats on current words, omitting unused letters.
+    ps [all]    - prints stats on current words, omitting unused letters without <all>.
     undo        - undoes the previous command
     exit        - quit
     """)
