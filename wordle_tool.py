@@ -161,6 +161,8 @@ if __name__ == '__main__':
         except EOFError:
             break
 
+        if len(current_input) == 0:
+            continue
         cmd, *args = shlex.split(current_input)
 
         if cmd == 'help':
