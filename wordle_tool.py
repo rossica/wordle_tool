@@ -161,6 +161,8 @@ if __name__ == '__main__':
         except EOFError:
             break
 
+        if len(current_input) == 0:
+            continue
         cmd, *args = shlex.split(current_input)
 
         if cmd == 'help':
@@ -175,40 +177,63 @@ if __name__ == '__main__':
             break
         elif cmd == 'f':
             if len(args) != 1:
-                print("Invalid args for command `f`: {}".format(args))
+                print("Invalid args for command `{}`: {}".format(cmd, args))
+                continue
+            if words == None:
+                print("Need to run `load` before `{}` command is valid.".format(cmd))
+                continue
             letters = args[0]
             previous_words = words
             words = filter_words(words, letters, False)
         elif cmd == 'fi':
             if len(args) != 1:
-                print("Invalid args for command `fi`: {}".format(args))
+                print("Invalid args for command `{}`: {}".format(cmd, args))
+                continue
+            if words == None:
+                print("Need to run `load` before `{}` command is valid.".format(cmd))
+                continue
             letters = args[0]
             previous_words = words
             words = filter_words(words, letters)
         elif cmd == 'fpu':
             if len(args) != 1:
-                print("Invalid args for command `fpu`: {}".format(args))
+                print("Invalid args for command `{}`: {}".format(cmd, args))
+                continue
+            if words == None:
+                print("Need to run `load` before `{}` command is valid.".format(cmd))
+                continue
             filter = args[0]
             previous_words = words
             words = filter_letter_unknown_position(words, filter)
         elif cmd == 'fpk':
             if len(args) != 1:
-                print("Invalid args for command `fpk`: {}".format(args))
+                print("Invalid args for command `{}`: {}".format(cmd, args))
+                continue
+            if words == None:
+                print("Need to run `load` before `{}` command is valid.".format(cmd))
+                continue
             filter = args[0]
             previous_words = words
             words = filter_letters_known_position(words, filter)
         elif cmd == 'p':
+            if words == None:
+                print("Need to run `load` before `{}` command is valid.".format(cmd))
+                continue
             print_words(words)
         elif cmd == 'ps':
             all = False
             if len(args) == 1 and args[0] == 'all':
                 all = True
+            if words == None:
+                print("Need to run `load` before `{}` command is valid.".format(cmd))
+                continue
             sort_letter_position_stats(letter_position_stats(words), letter_stats_uniq(words), len(words), all)
         elif cmd == 'undo':
             if previous_words == None:
                 print("No commands to undo!")
             else:
                 words = previous_words
+                previous_words = None
         else:
             print("Command {} unrecognized".format(cmd))
 
