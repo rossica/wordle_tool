@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/brython@3.10.4/brython.min.js">
+    </script>
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/brython@3.10.4/brython_stdlib.js">
+    </script>
+    <style>
+        table th { width: 6em; border: 1px solid black; }
+        table td:nth-child(2) { text-align: end; }
+        table td:nth-child(3) { text-align: end; }
+        table td:nth-child(4) { text-align: end; }
+        table td:nth-child(5) { text-align: end; }
+        table td:nth-child(6) { text-align: end; }
+        table td:nth-child(7) { text-align: end; }
+        table td:nth-child(8) { text-align: end; }
+    </style>
+</head>
+<body onload="brython()">
+<script type="text/python" src="wordle_tool_web.py"></script>
+<h2>Wordle Tool on the Web</h2>
+<h4>This page lets you explore wordle_tool from the comfort of your browser!</h4>
+<p>
+<label for="cmd">Command:</label>
+<input id="cmd" type="text">
+<button id="load_button">Load</button>
+<button disabled=true id="print_button">Print</button>
+<button disabled=true id="print_stats_button">Print Stats</button>
+<button disabled=true id="filter_incl_button">Filter (incl.)</button>
+<button disabled=true id="filter_excl_button">Filter (excl.)</button>
+<button disabled=true id="filter_pos_known_button">Filter Position Known</button>
+<button disabled=true id="filter_pos_unknown_button">Filter Unknown Position</button>
+<button id="help_button">Help Button</button>
+<hr>
+<p>
+<div id = "output"></div>
+</body>
+</html>
