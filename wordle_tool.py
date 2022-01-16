@@ -13,7 +13,6 @@
 #   You should have received a copy of the GNU General Public License along
 #   with this program. If not, see <https://www.gnu.org/licenses/>.
 #
-import shlex
 
 def read_words(file_name = "dictionary.txt"):
     f = open(file_name, 'r')
@@ -121,12 +120,15 @@ def letter_position_stats(words):
             idx += 1
     return stats
 
-def sort_letter_position_stats(pos_stats, letters, count, all=False):
-    chars = [chr(x+65) for x in range(26)]
+def sort_letter_position_stats(pos_stats, letters):
+    chars = [chr(x + ord('A')) for x in range(26)]
     l = list(zip(chars, letters, pos_stats))
     l.sort(key = lambda x: x[1], reverse=True)
+    return l
+
+def print_letter_position_stats(stats, count, all=False):
     div = lambda x,y: x / y if y else 0
-    for t in l:
+    for t in stats:
         if all or t[1] > 0:
             print("{}: {: >6.2f}% -> {: >8.1f}{: >8.1f}{: >8.1f}{: >8.1f}{: >8.1f} {: >8}".format(t[0], (t[1]/count)*100, div(t[2][0], t[1])*100, div(t[2][1],t[1])*100, div(t[2][2],t[1])*100, div(t[2][3],t[1])*100, div(t[2][4],t[1])*100, "multi" if sum(t[2]) > t[1] else ''))
     print("total: {} words".format(count))
@@ -151,6 +153,7 @@ def print_words(words):
     print(words)
 
 if __name__ == '__main__':
+    import shlex
     print("Welcome to Wordle Tool!")
     print("For help, type `help`.")
     words = None
@@ -227,7 +230,8 @@ if __name__ == '__main__':
             if words == None:
                 print("Need to run `load` before `{}` command is valid.".format(cmd))
                 continue
-            sort_letter_position_stats(letter_position_stats(words), letter_stats_uniq(words), len(words), all)
+            stats = sort_letter_position_stats(letter_position_stats(words), letter_stats_uniq(words))
+            print_letter_position_stats(stats, len(words), all)
         elif cmd == 'undo':
             if previous_words == None:
                 print("No commands to undo!")
