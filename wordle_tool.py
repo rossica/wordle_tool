@@ -69,25 +69,38 @@ def filter_words(words, filter, containing=True):
             hits.append(word)
     return hits
 
+def IsLetter(letter):
+    return ord("A") <= ord(letter) <= ord("Z")
+
+def deep_copy_dict(other):
+    d = dict()
+    for k,v in other.items():
+        d[k] = v
+    return d
+
 def filter_letter_unknown_position(words, filter):
     hits = []
-    letter = ''
-    for c in filter:
-        if c != '_':
-            letter = c.upper()
-            break
+    filter = filter.upper()
+    filter_dict = word2dict(filter)
+    # delete non-letters from dictionary
+    for k in list(filter_dict.keys()):
+        if not IsLetter(k):
+            del filter_dict[k]
     for word in words:
-        match = False
         idx = 0
+        fail = False
+        temp_filter = deep_copy_dict(filter_dict)
         for c in word:
-            if c == filter[idx].upper():
+            if c == filter[idx]:
                 # This means the filter letter matched in the disallow position
-                match = False
+                fail = True
                 break
-            elif c == letter and filter[idx] == '_':
-                match = True
+            elif c in temp_filter and not IsLetter(filter[idx]):
+                temp_filter[c] -= 1
+                if temp_filter[c] == 0:
+                    del temp_filter[c]
             idx += 1
-        if match:
+        if len(temp_filter) == 0 and not fail:
             hits.append(word)
     return hits
 
@@ -98,7 +111,7 @@ def filter_letters_known_position(words, filter):
         match = True
         idx = 0
         for c in filter:
-            if c == '_':
+            if not IsLetter(c):
                 pass
             elif c == word[idx]:
                 match = True
