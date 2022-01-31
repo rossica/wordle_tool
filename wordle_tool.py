@@ -46,13 +46,17 @@ def sort_letter_stats(letters, count):
         print("{}: {:.2f}%".format(t[0], (t[1]/count)*100))
     print("total: {} words".format(count))
 
+def IsLetter(letter):
+    return ord("A") <= ord(letter) <= ord("Z")
+
 def word2dict(word):
     d = dict()
     for c in word:
-        if c in d:
-            d[c] += 1
-        else:
-            d[c] = 1
+        if IsLetter(c):
+            if c in d:
+                d[c] += 1
+            else:
+                d[c] = 1
     return d
 
 def filter_words(words, filter, containing=True):
@@ -69,9 +73,6 @@ def filter_words(words, filter, containing=True):
             hits.append(word)
     return hits
 
-def IsLetter(letter):
-    return ord("A") <= ord(letter) <= ord("Z")
-
 def deep_copy_dict(other):
     d = dict()
     for k,v in other.items():
@@ -82,10 +83,6 @@ def filter_letter_unknown_position(words, filter):
     hits = []
     filter = filter.upper()
     filter_dict = word2dict(filter)
-    # delete non-letters from dictionary
-    for k in list(filter_dict.keys()):
-        if not IsLetter(k):
-            del filter_dict[k]
     for word in words:
         idx = 0
         fail = False
@@ -95,7 +92,7 @@ def filter_letter_unknown_position(words, filter):
                 # This means the filter letter matched in the disallow position
                 fail = True
                 break
-            elif c in temp_filter and not IsLetter(filter[idx]):
+            elif c in temp_filter:
                 temp_filter[c] -= 1
                 if temp_filter[c] == 0:
                     del temp_filter[c]
@@ -104,22 +101,25 @@ def filter_letter_unknown_position(words, filter):
             hits.append(word)
     return hits
 
+def word2posdict(word):
+    idx = 0
+    d = dict()
+    for c in word:
+        if IsLetter(c):
+            d[idx] = c
+        idx += 1
+    return d
+
 def filter_letters_known_position(words, filter):
     hits = []
     filter = filter.upper()
+    filter_dict = word2posdict(filter)
     for word in words:
         match = True
-        idx = 0
-        for c in filter:
-            if not IsLetter(c):
-                pass
-            elif c == word[idx]:
-                match = True
-            else:
+        for k,v in filter_dict.items():
+            if word[k] != v:
                 match = False
                 break
-            idx += 1
-
         if match:
             hits.append(word)
     return hits
