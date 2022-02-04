@@ -73,34 +73,6 @@ def filter_words(words, filter, containing=True):
             hits.append(word)
     return hits
 
-def deep_copy_dict(other):
-    d = dict()
-    for k,v in other.items():
-        d[k] = v
-    return d
-
-def filter_letter_unknown_position(words, filter):
-    hits = []
-    filter = filter.upper()
-    filter_dict = word2dict(filter)
-    for word in words:
-        idx = 0
-        fail = False
-        temp_filter = deep_copy_dict(filter_dict)
-        for c in word:
-            if c == filter[idx]:
-                # This means the filter letter matched in the disallow position
-                fail = True
-                break
-            elif c in temp_filter:
-                temp_filter[c] -= 1
-                if temp_filter[c] == 0:
-                    del temp_filter[c]
-            idx += 1
-        if len(temp_filter) == 0 and not fail:
-            hits.append(word)
-    return hits
-
 def word2posdict(word):
     idx = 0
     d = dict()
@@ -109,6 +81,29 @@ def word2posdict(word):
             d[idx] = c
         idx += 1
     return d
+
+def filter_letter_unknown_position(words, filter):
+    hits = []
+    filter = filter.upper()
+    filter_count = word2dict(filter)
+    filter_pos = word2posdict(filter)
+    for word in words:
+        word_pos = word2posdict(word)
+        match = True
+        for k,v in filter_pos.items():
+            if word_pos[k] == v:
+                match = False
+                break
+        if not match:
+            continue
+        word_count = word2dict(word)
+        for k,v in filter_count.items():
+            if word_count.get(k, 0) != v:
+                match = False
+                break
+        if match:
+            hits.append(word)
+    return hits
 
 def filter_letters_known_position(words, filter):
     hits = []

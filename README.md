@@ -88,9 +88,9 @@ SMILE
 
 #### Filter Position Unknown command
 The `fpu` command is used when you get a yellow letter in Wordle. It will filter out words that don't contain the letter, and words that contain the letter in the given position.
-The filter syntax uses underscore, `_`, for the other positions, and then the letter to filter to.  This filter syntax only supports one letter at a time.
+The filter syntax uses any non-letter symbol for the other positions, and then the letters to filter to. This filter syntax supports multiple letters.
 ```
-> fpu ____s
+> fpu __l_s
 ```
 Will filter out all words without an 's', and all words that end with 's'.
 Given the words
@@ -100,7 +100,7 @@ FLASK
 LAKES
 SLEET
 ```
-the command `> fpu ____s` will give
+the command `> fpu __l_s` will give
 ```
 FLASK
 SLEET
@@ -108,7 +108,7 @@ SLEET
 
 #### Filter Position Known command
 The `fpk` command is used when you get a green letter in Wordle.  It will filter out words that do not contain the letter in the given position.
-The filter syntax uses underscore, `_`, for the other positions, and the letter in the known position. This filter syntax supports multiple letters.
+The filter syntax uses any non-letter symbol for the other positions, and the letter in the known position. This filter syntax supports multiple letters.
 The command `> fpk ___e_` will filter out all words without an 'e' in the 4th position.
 Given the words
 ```
