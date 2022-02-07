@@ -98,7 +98,7 @@ def filter_letter_unknown_position(words, filter):
             continue
         word_count = word2dict(word)
         for k,v in filter_count.items():
-            if word_count.get(k, 0) != v:
+            if word_count.get(k, 0) < v:
                 match = False
                 break
         if match:
