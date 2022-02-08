@@ -8,15 +8,65 @@
     <script type="text/javascript"
         src="https://cdn.jsdelivr.net/npm/brython@3.10.4/brython_stdlib.js">
     </script>
-    <style>
-        table th { width: 6em; border: 1px solid black; }
-        table td:nth-child(2) { text-align: end; }
-        table td:nth-child(3) { text-align: end; }
-        table td:nth-child(4) { text-align: end; }
-        table td:nth-child(5) { text-align: end; }
-        table td:nth-child(6) { text-align: end; }
-        table td:nth-child(7) { text-align: end; }
-        table td:nth-child(8) { text-align: end; }
+    <style type="text/css">
+        table th {
+            width: 6em;
+            border: 1px solid black;
+        }
+        table td:nth-child(n+2):nth-child(-n+8) { text-align: end; }
+        .inputblack {
+            border:none;
+            box-shadow: 2 2 2 2px black;
+            color:white;
+            background-color: black;
+            font-size: 36px;
+            font-variant: small-caps;
+            font-family: monospace;
+            padding: 10px;
+        }
+        .inputgreen {
+            border:none;
+            box-shadow: 2 2 2 2px black;
+            color:black;
+            background-color: lightgreen;
+            font-size: 36px;
+            font-variant: small-caps;
+            font-family: monospace;
+            padding: 10px;
+        }
+        .inputyellow {
+            border:none;
+            box-shadow: 2 2 2 2px black;
+            color:black;
+            background-color: yellow;
+            font-size: 36px;
+            font-variant: small-caps;
+            font-family: monospace;
+            padding: 10px;
+        }
+        #container {
+            width: 70%;
+            min-width: 700px;
+            margin: 0 auto;
+            outline: 1px;
+        }
+        #stats {
+            float:left;
+            width:80%;
+            height: fit-content;
+        }
+        #output {
+            float:left;
+            width:80%;
+            column-count: auto;
+            column-width: 3rem;
+            column-gap: 40px;
+        }
+        #log {
+            float:right;
+            width:19%;
+            border: none;
+        }
     </style>
 </head>
 <body onload="brython()">
@@ -24,18 +74,36 @@
 <h2>Wordle Tool on the Web</h2>
 <h4>This page lets you explore wordle_tool from the comfort of your browser!</h4>
 <p>
-<label for="cmd">Command:</label>
-<input id="cmd" type="text">
-<button id="load_button">Load</button>
-<button disabled=true id="print_button">Print</button>
-<button disabled=true id="print_stats_button">Print Stats</button>
-<button disabled=true id="filter_incl_button">Filter (incl.)</button>
-<button disabled=true id="filter_excl_button">Filter (excl.)</button>
-<button disabled=true id="filter_pos_known_button">Filter Position Known</button>
-<button disabled=true id="filter_pos_unknown_button">Filter Unknown Position</button>
-<button id="help_button">Help Button</button>
-<hr>
+<div id="advanced_input" hidden="true">
+    <label for="cmd">Command:</label>
+    <input id="cmd" type="text">
+    <button id="load_button">Load</button>
+    <button id="print_button">Print</button>
+    <button id="print_stats_button">Print Stats</button>
+    <button id="filter_incl_button">Filter (incl.)</button>
+    <button id="filter_excl_button">Filter (excl.)</button>
+    <button id="filter_pos_known_button">Filter Position Known</button>
+    <button id="filter_pos_unknown_button">Filter Unknown Position</button>
+    <button id="adv_help_button">Advanced Help</button>
+</div>
+<div id="simple_input">
+    <input id="one" type="text" class="inputblack" minlength="0" maxlength="1" size="1">
+    <input id="two" type="text" class="inputblack" minlength="0" maxlength="1" size="1">
+    <input id="three" type="text" class="inputblack" minlength="0" maxlength="1" size="1">
+    <input id="four" type="text" class="inputblack" minlength="0" maxlength="1" size="1">
+    <input id="five" type="text" class="inputblack" minlength="0" maxlength="1" size="1">
+    <button id="simple_filter_button">Filter</button>
+    <button id="simple_print_button">Print</button>
+    <button id="simple_print_stats_button">Print Stats</button>
+    <button id="simple_help_button">Help</button>
+    <button id="show_adv_controls_button">Show Advanced Controls</button>
+</div>
 <p>
-<div id = "output"></div>
+<div id="container">
+    <div id="stats"></div>
+    <div id="output"></div>
+    <div id="log" hidden="true"></div>
+    <div style="clear:both;"></div>
+</div>
 </body>
 </html>
