@@ -46,6 +46,16 @@
             font-family: monospace;
             padding: 10px;
         }
+        .inputpurple {
+            border:none;
+            box-shadow: 2 2 2 2px black;
+            color:black;
+            background-color: purple;
+            font-size: 36px;
+            font-variant: small-caps;
+            font-family: monospace;
+            padding: 10px;
+        }
         .inputyellow {
             border:none;
             box-shadow: 2 2 2 2px black;
@@ -64,7 +74,8 @@
         }
         #simple_controls,
         #simple_buttons,
-        #simple_inputs {
+        #simple_inputs,
+        #undo_container {
             width: fit-content;
             margin-left: auto;
             margin-right: auto;
@@ -88,7 +99,7 @@
             min-width: 740px;
             width:740px;
         }
-        #log {
+        #log_container {
             float:right;
             width:16%;
             min-width: 200px;
@@ -104,7 +115,6 @@
 <div id="advanced_controls" hidden="true">
     <label for="cmd">Command:</label>
     <input id="cmd" type="text">
-    <button id="load_button">Load</button>
     <button id="filter_incl_button">Filter (incl.)</button>
     <button id="filter_excl_button">Filter (excl.)</button>
     <button id="filter_pos_known_button">Filter Position Known</button>
@@ -122,8 +132,6 @@
     </div>
     <div id="simple_buttons">
         <button id="simple_filter_button">Filter</button>
-        <button id="simple_print_button" hidden="true">Print</button>
-        <button id="simple_print_stats_button" hidden="true">Print Stats</button>
         <button id="simple_help_button">Help</button>
         <button id="show_adv_controls_button">Show Advanced Controls</button>
     </div>
@@ -135,7 +143,12 @@
         <hr id="divider" hidden="true">
         <div id="output"></div>
     </div>
-    <div id="log" hidden="true"></div>
+    <div id="log_container" hidden="true">
+        <div id="undo_container">
+            <button id="undo_button">Undo</button>
+        </div>
+        <div id="log"></div>
+    </div>
     <div style="clear:both;"></div>
 </div>
 </body>
