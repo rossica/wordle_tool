@@ -6,26 +6,29 @@ from wordle_tool import IsLetter, sort_letter_position_stats, letter_position_st
 INPUT_BLACK = "inputblack"
 INPUT_YELLOW = "inputyellow"
 INPUT_GREEN = "inputgreen"
+INPUT_PURPLE = "inputpurple"
+
+WORD_LENGTH = 5
+
+def update_words(new_words):
+    global previous_words
+    global words
+    if words != None:
+        previous_words.append(words)
+    words = new_words
 
 def load_words():
-    global words
     url = './dictionary.txt'
     file = urlopen(url).read()
     new_words = list()
     for line in file.split('\n'):
         new_words.append(line.strip())
-    words = new_words
-
-def load_button(event):
-    load_words()
-    global words
-    update_log('', 'load')
+    update_words(new_words)
 
 def print_button(event):
     document['output'].innerHTML = " ".join(words)
 
 def print_stats_button(event):
-    global words
     count = len(words)
     div = lambda x,y: x / y if y else 0
     stats = sort_letter_position_stats(letter_position_stats(words), letter_stats_uniq(words))
@@ -48,30 +51,30 @@ def print_stats_button(event):
         document['divider'].hidden = False
 
 def filter_incl_button(event):
-    global words
-    words = filter_words(words, document["cmd"].value)
-    update_log(document["cmd"].value, "incl")
+    new_words = filter_words(words, document["cmd"].value)
+    update_words(new_words)
+    update_log(document["cmd"].value, INPUT_PURPLE)
     print_stats_button(None)
     print_button(None)
 
 def filter_excl_button(event):
-    global words
-    words = filter_words(words, document["cmd"].value, False)
-    update_log(document["cmd"].value, "excl")
+    new_words = filter_words(words, document["cmd"].value, False)
+    update_words(new_words)
+    update_log(document["cmd"].value, INPUT_BLACK)
     print_stats_button(None)
     print_button(None)
 
 def filter_pos_known(event):
-    global words
-    words = filter_letters_known_position(words, document["cmd"].value)
-    update_log(document["cmd"].value, "fpk")
+    new_words = filter_letters_known_position(words, document["cmd"].value)
+    update_words(new_words)
+    update_log(document["cmd"].value, INPUT_GREEN)
     print_stats_button(None)
     print_button(None)
 
 def filter_pos_unknown(event):
-    global words
-    words = filter_letter_unknown_position(words, document["cmd"].value)
-    update_log(document["cmd"].value, "fpu")
+    new_words = filter_letter_unknown_position(words, document["cmd"].value)
+    update_words(new_words)
+    update_log(document["cmd"].value, INPUT_YELLOW)
     print_stats_button(None)
     print_button(None)
 
@@ -96,18 +99,31 @@ def text_click(event):
         event.currentTarget.class_name = INPUT_BLACK
 
 def update_log(cmd=None, op=None):
-    document['log'].hidden = False
-    if document['simple_controls'].hidden == True:
-        document['log'] <= P("{} {} {}".format(cmd, "|" if cmd else '', op))
+    global next_log
+    document['log_container'].hidden = False
+    t = TABLE(id='log-{}'.format(next_log))
+    if op != None:
+        tr = TR()
+        idx = 0
+        for c in cmd:
+            if IsLetter(c.upper()):
+                tr <= TD(c, Class=op)
+            else:
+                tr <= TD('&nbsp;', Class=INPUT_BLACK)
+            idx += 1
+        while idx < WORD_LENGTH:
+            tr <= TD('&nbsp;', Class=INPUT_BLACK)
+            idx += 1
+        t <= tr
     else:
-        t = TABLE()
         t <= TR(
             TD(document['one'].value, Class=document['one'].class_name) +
             TD(document['two'].value, Class=document['two'].class_name) +
             TD(document['three'].value, Class=document['three'].class_name) +
             TD(document['four'].value, Class=document['four'].class_name) +
             TD(document['five'].value, Class=document['five'].class_name))
-        document['log'] <= t
+    document['log'] <= t
+    next_log += 1
 
 def get_letter(elem, excl, fpu, fpk):
     letter = elem.value.upper()
@@ -161,7 +177,7 @@ def simple_filter_button(event):
         temp = filter_letters_known_position(temp, "".join(fpk))
     if contains_letter(fpu):
         temp = filter_letter_unknown_position(temp, "".join(fpu))
-    words = temp
+    update_words(temp)
     update_log()
     print_stats_button(None)
     print_button(None)
@@ -182,9 +198,26 @@ def show_simple_controls_button(event):
     document['simple_controls'].hidden = False
     document['advanced_controls'].hidden = True
 
+def undo_button(event):
+    global words
+    global next_log
+    if len(previous_words) > 0:
+        words = previous_words.pop()
+        del document['log-{}'.format(next_log - 1)]
+        next_log -= 1
+        if next_log == 1:
+            document['log_container'].hidden = True
+            document['stats'].clear()
+            document['output'].clear()
+            document['divider'].hidden = True
+        else:
+            print_stats_button(None)
+            print_button(None)
+
 # On page load, the following is executed
-words = list()
-document['load_button'].bind("click", load_button)
+words = None
+previous_words = list()
+next_log = 1
 document['filter_incl_button'].bind("click", filter_incl_button)
 document['filter_excl_button'].bind("click", filter_excl_button)
 document['filter_pos_known_button'].bind("click", filter_pos_known)
@@ -198,9 +231,9 @@ document['three'].bind("click", text_click)
 document['four'].bind("click", text_click)
 document['five'].bind("click", text_click)
 document['simple_filter_button'].bind("click", simple_filter_button)
-document['simple_print_button'].bind("click", print_button)
-document['simple_print_stats_button'].bind("click", print_stats_button)
 document['simple_help_button'].bind("click", simple_help_button)
 document['show_adv_controls_button'].bind("click", show_adv_controls_button)
+
+document['undo_button'].bind("click", undo_button)
 
 load_words()
