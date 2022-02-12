@@ -51,36 +51,43 @@ def print_stats_button(event):
         document['divider'].hidden = False
 
 def filter_incl_button(event):
-    new_words = filter_words(words, document["cmd"].value)
+    cmd = document["cmd"].value
+    document["cmd"].value = ''
+    new_words = filter_words(words, cmd)
     update_words(new_words)
-    update_log(document["cmd"].value, INPUT_PURPLE)
+    update_log(cmd, INPUT_PURPLE)
     print_stats_button(None)
     print_button(None)
 
 def filter_excl_button(event):
-    new_words = filter_words(words, document["cmd"].value, False)
+    cmd = document["cmd"].value
+    document["cmd"].value = ''
+    new_words = filter_words(words, cmd, False)
     update_words(new_words)
-    update_log(document["cmd"].value, INPUT_BLACK)
+    update_log(cmd, INPUT_BLACK)
     print_stats_button(None)
     print_button(None)
 
 def filter_pos_known(event):
-    new_words = filter_letters_known_position(words, document["cmd"].value)
+    cmd = document["cmd"].value
+    document["cmd"].value = ''
+    new_words = filter_letters_known_position(words, cmd)
     update_words(new_words)
-    update_log(document["cmd"].value, INPUT_GREEN)
+    update_log(cmd, INPUT_GREEN)
     print_stats_button(None)
     print_button(None)
 
 def filter_pos_unknown(event):
-    new_words = filter_letter_unknown_position(words, document["cmd"].value)
+    cmd = document["cmd"].value
+    document["cmd"].value = ''
+    new_words = filter_letter_unknown_position(words, cmd)
     update_words(new_words)
-    update_log(document["cmd"].value, INPUT_YELLOW)
+    update_log(cmd, INPUT_YELLOW)
     print_stats_button(None)
     print_button(None)
 
 def adv_help_button(event):
     help_text = """
-    Load                    - Loads dictionary file
     Filter (incl.)          - Filters to words containing letters
     Filter (excl.)          - Filters out words containing letters
     Filter position known   - Filters to words with letters in given position.
@@ -98,12 +105,16 @@ def text_click(event):
     else:
         event.currentTarget.class_name = INPUT_BLACK
 
-def update_log(cmd=None, op=None):
+def update_input(key, value, class_name):
+    document[key].value = value
+    document[key].class_name = class_name
+
+def update_log(cmd=None, op=None, clear=False):
     global next_log
     document['log_container'].hidden = False
     t = TABLE(id='log-{}'.format(next_log))
     if op != None:
-        tr = TR()
+        tr = TR(id='row-{}'.format(next_log))
         idx = 0
         for c in cmd:
             if IsLetter(c.upper()):
@@ -117,11 +128,18 @@ def update_log(cmd=None, op=None):
         t <= tr
     else:
         t <= TR(
-            TD(document['one'].value, Class=document['one'].class_name) +
-            TD(document['two'].value, Class=document['two'].class_name) +
-            TD(document['three'].value, Class=document['three'].class_name) +
-            TD(document['four'].value, Class=document['four'].class_name) +
-            TD(document['five'].value, Class=document['five'].class_name))
+            TD(document['one'].value if document['one'].value else '&nbsp;', Class=document['one'].class_name) +
+            TD(document['two'].value if document['two'].value else '&nbsp;', Class=document['two'].class_name) +
+            TD(document['three'].value if document['three'].value else '&nbsp;', Class=document['three'].class_name) +
+            TD(document['four'].value if document['four'].value else '&nbsp;', Class=document['four'].class_name) +
+            TD(document['five'].value if document['five'].value else '&nbsp;', Class=document['five'].class_name),
+            id='row-{}'.format(next_log))
+        if clear:
+            update_input('one', '', INPUT_BLACK)
+            update_input('two', '', INPUT_BLACK)
+            update_input('three', '', INPUT_BLACK)
+            update_input('four', '', INPUT_BLACK)
+            update_input('five', '', INPUT_BLACK)
     document['log'] <= t
     next_log += 1
 
@@ -178,7 +196,7 @@ def simple_filter_button(event):
     if contains_letter(fpu):
         temp = filter_letter_unknown_position(temp, "".join(fpu))
     update_words(temp)
-    update_log()
+    update_log(clear=True)
     print_stats_button(None)
     print_button(None)
 
@@ -203,6 +221,39 @@ def undo_button(event):
     global next_log
     if len(previous_words) > 0:
         words = previous_words.pop()
+        idx = 1
+        for elem in document['row-{}'.format(next_log - 1)].children:
+            if document['simple_controls'].hidden == True:
+                if idx == 1:
+                    document['cmd'].value = ''
+                document['cmd'].value += elem.text
+            else:
+                if idx == 1:
+                    update_input(
+                        'one',
+                        elem.text if elem.html != '&nbsp;' else '',
+                        elem.class_name if elem.class_name != INPUT_PURPLE else INPUT_GREEN)
+                elif idx == 2:
+                    update_input(
+                        'two',
+                        elem.text if elem.html != '&nbsp;' else '',
+                        elem.class_name if elem.class_name != INPUT_PURPLE else INPUT_GREEN)
+                elif idx == 3:
+                    update_input(
+                        'three',
+                        elem.text if elem.html != '&nbsp;' else '',
+                        elem.class_name if elem.class_name != INPUT_PURPLE else INPUT_GREEN)
+                elif idx == 4:
+                    update_input(
+                        'four',
+                        elem.text if elem.html != '&nbsp;' else '',
+                        elem.class_name if elem.class_name != INPUT_PURPLE else INPUT_GREEN)
+                elif idx == 5:
+                    update_input(
+                        'five',
+                        elem.text if elem.html != '&nbsp;' else '',
+                        elem.class_name if elem.class_name != INPUT_PURPLE else INPUT_GREEN)
+            idx += 1
         del document['log-{}'.format(next_log - 1)]
         next_log -= 1
         if next_log == 1:
