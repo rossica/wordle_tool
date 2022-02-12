@@ -1,7 +1,7 @@
 from browser import document, alert
 from browser.html import *
 from urllib.request import urlopen
-from wordle_tool import IsLetter, sort_letter_position_stats, letter_position_stats, letter_stats_uniq, filter_words, filter_letters_known_position, filter_letter_unknown_position
+from wordle_tool import IsLetter, sort_letter_position_stats, letter_position_stats, letter_stats_uniq, filter_words, filter_letters_known_position, filter_letter_unknown_position, filter_all
 
 INPUT_BLACK = "inputblack"
 INPUT_YELLOW = "inputyellow"
@@ -167,7 +167,6 @@ def contains_letter(string_like):
     return False
 
 def simple_filter_button(event):
-    global words
     excl = []
     fpu = []
     fpk = []
@@ -187,14 +186,7 @@ def simple_filter_button(event):
             extras.append(l)
     excl.extend(extras)
 
-    if len(excl) != 0:
-        temp = filter_words(words, "".join(excl), False)
-    else:
-        temp = words
-    if contains_letter(fpk):
-        temp = filter_letters_known_position(temp, "".join(fpk))
-    if contains_letter(fpu):
-        temp = filter_letter_unknown_position(temp, "".join(fpu))
+    temp = filter_all(words, "".join(excl), "".join(fpk), "".join(fpu))
     update_words(temp)
     update_log(clear=True)
     print_stats_button(None)
