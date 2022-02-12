@@ -131,7 +131,7 @@ def filter_all(words, excl, fpk, fpu):
             continue
         if not filter_position_known(fpk_dict, word):
             continue
-        if not filter_unknown_position(fpu_count, fpu_pos, word2dict(word), word2posdict(word)):
+        if len(fpu_count) > 0 and not filter_unknown_position(fpu_count, fpu_pos, word_dict, word2posdict(word)):
             continue
         hits.append(word)
     return hits

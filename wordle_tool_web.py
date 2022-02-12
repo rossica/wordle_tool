@@ -160,12 +160,6 @@ def get_letter(elem, excl, fpu, fpk):
         fpu.append('_')
         fpk.append('_')
 
-def contains_letter(string_like):
-    for c in string_like:
-        if IsLetter(c):
-            return True
-    return False
-
 def simple_filter_button(event):
     excl = []
     fpu = []
