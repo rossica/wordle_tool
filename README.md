@@ -1,10 +1,13 @@
 # wordle_tool
-A tool to help play the game Wordle.
+A tool to help play the game Wordle(tm).
+
+## Web Version
+A web-version of wordle_tool is available at [https://rossica.github.io/wordle_tool/](https://rossica.github.io/wordle_tool/). The UI is more familiar to players of Wordle(tm) than the command-line version.
 
 ## Prerequisites
 You will need the following before you can unleash the full power of wordle_tool:
-- Python 3.8 or newer
-- A dictionary file with only 5-letter words, all upper case, one word per line
+- Python 3.8 or newer.
+- A dictionary file with only 5-letter words, all upper case, one word per line. The repository includes one you can use.
 
 ## How to use wordle_tool
 
