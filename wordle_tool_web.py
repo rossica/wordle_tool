@@ -189,8 +189,8 @@ def simple_filter_button(event):
 def simple_help_button(event):
     simple_help_text = """
     Enter the output from Wordle(tm) into the boxes.
-    Click on each box to change the color to yellow, green, or black.
-    Click on "Filter" to get the output.
+    Click/tap on each box to change the color to yellow, green, or black.
+    Click/tap on "Filter" to get the output.
     """
     alert(simple_help_text)
 
