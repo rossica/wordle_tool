@@ -60,7 +60,7 @@ def word2dict(word):
     return d
 
 def filter_word(filter_dict, word_dict, containing):
-    for k in filter_dict.keys():
+    for k in filter_dict:
         if (k not in word_dict or word_dict[k] < filter_dict[k]) == containing:
             return False
     return True
@@ -83,30 +83,9 @@ def word2posdict(word):
         idx += 1
     return d
 
-def filter_unknown_position(filter_count, filter_pos, word_count, word_pos):
-    for k,v in filter_pos.items():
-        if word_pos[k] == v:
-            return False
-    for k,v in filter_count.items():
-        if word_count.get(k, 0) < v:
-            return False
-    return True
-
-def filter_letter_unknown_position(words, filter):
-    hits = []
-    filter = filter.upper()
-    filter_count = word2dict(filter)
-    filter_pos = word2posdict(filter)
-    for word in words:
-        word_pos = word2posdict(word)
-        word_count = word2dict(word)
-        if filter_unknown_position(filter_count, filter_pos, word_count, word_pos):
-            hits.append(word)
-    return hits
-
-def filter_position_known(filter_dict, word):
-    for k,v in filter_dict.items():
-        if word[k] != v:
+def filter_position_known(filter_dict, word, match=True):
+    for k in filter_dict:
+        if (word[k] != filter_dict[k]) == match:
             return False
     return True
 
@@ -116,6 +95,22 @@ def filter_letters_known_position(words, filter):
     filter_dict = word2posdict(filter)
     for word in words:
         if filter_position_known(filter_dict, word):
+            hits.append(word)
+    return hits
+
+def filter_unknown_position(filter_count, filter_pos, word_count, word):
+    if not filter_position_known(filter_pos, word, False):
+        return False
+    return filter_word(filter_count, word_count, True)
+
+def filter_letter_unknown_position(words, filter):
+    hits = []
+    filter = filter.upper()
+    filter_count = word2dict(filter)
+    filter_pos = word2posdict(filter)
+    for word in words:
+        word_count = word2dict(word)
+        if filter_unknown_position(filter_count, filter_pos, word_count, word):
             hits.append(word)
     return hits
 
@@ -129,9 +124,9 @@ def filter_all(words, excl, fpk, fpu):
         word_dict = word2dict(word)
         if not filter_word(excl_dict, word_dict, False):
             continue
-        if not filter_position_known(fpk_dict, word):
+        if len(fpk_dict) > 0 and not filter_position_known(fpk_dict, word):
             continue
-        if len(fpu_count) > 0 and not filter_unknown_position(fpu_count, fpu_pos, word_dict, word2posdict(word)):
+        if len(fpu_count) > 0 and not filter_unknown_position(fpu_count, fpu_pos, word_dict, word):
             continue
         hits.append(word)
     return hits
