@@ -1,7 +1,7 @@
 from browser import document, alert
 from browser.html import *
 from urllib.request import urlopen
-from wordle_tool import IsLetter, sort_letter_position_stats, letter_position_stats, letter_stats_uniq, filter_words, filter_letters_known_position, filter_letter_unknown_position, filter_all
+from wordle_tool import IsLetter, word2dict, sort_letter_position_stats, letter_position_stats, letter_stats_uniq, filter_words, filter_letters_known_position, filter_letter_unknown_position, filter_all
 
 INPUT_BLACK = "inputblack"
 INPUT_YELLOW = "inputyellow"
@@ -169,6 +169,11 @@ def simple_filter_button(event):
     get_letter(document['three'], excl, fpu, fpk)
     get_letter(document['four'], excl, fpu, fpk)
     get_letter(document['five'], excl, fpu, fpk)
+    # If there's a duplicate letter in excl, that means it can
+    # never occur in any word, so remove the duplicate
+    for k,v in word2dict("".join(excl)).items():
+        if v > 1:
+            excl.remove(k)
     # if there's a letter that is excluded and in `fpu/fpk`,
     # add it again to `excl` so duplicates are filtered,
     # not simply all occurrences.

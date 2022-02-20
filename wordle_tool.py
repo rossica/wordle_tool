@@ -120,8 +120,14 @@ def filter_all(words, excl, fpk, fpu):
     fpk_dict = word2posdict(fpk.upper())
     fpu_count = word2dict(fpu.upper())
     fpu_pos = word2posdict(fpu.upper())
+    incl_count = dict()
+    for k,v in word2dict(fpk.upper()).items():
+        if k in fpu_count:
+            incl_count[k] = v + fpu_count[k]
     for word in words:
         word_dict = word2dict(word)
+        if len(incl_count) > 0 and not filter_word(incl_count, word_dict, True):
+            continue
         if not filter_word(excl_dict, word_dict, False):
             continue
         if len(fpk_dict) > 0 and not filter_position_known(fpk_dict, word):
