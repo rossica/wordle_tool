@@ -97,6 +97,13 @@ def adv_help_button(event):
     """
     alert(help_text)
 
+def move_cursor(elemid):
+    field = document[elemid]
+    length = len(field.value)
+    field.focus()
+    field.selection_start = length
+    field.selection_end = length
+
 def text_click(event):
     if event.currentTarget.class_name == INPUT_BLACK:
         event.currentTarget.class_name = INPUT_YELLOW
@@ -104,6 +111,30 @@ def text_click(event):
         event.currentTarget.class_name = INPUT_GREEN
     else:
         event.currentTarget.class_name = INPUT_BLACK
+
+def back_nav(event):
+    if event.key == 'Backspace':
+        # move to the previous letter
+        if event.currentTarget == document['five']:
+            move_cursor('four')
+        if event.currentTarget == document['four']:
+            move_cursor('three')
+        if event.currentTarget == document['three']:
+            move_cursor('two')
+        if event.currentTarget == document['two']:
+            move_cursor('one')
+
+def input_nav(event):
+    event.currentTarget.value = event.key
+    # move to the next one
+    if event.currentTarget == document['one']:
+        move_cursor('two')
+    if event.currentTarget == document['two']:
+        move_cursor('three')
+    if event.currentTarget == document['three']:
+        move_cursor('four')
+    if event.currentTarget == document['four']:
+        move_cursor('five')
 
 def update_input(key, value, class_name):
     document[key].value = value
@@ -256,6 +287,11 @@ def undo_button(event):
             print_stats_button(None)
             print_button(None)
 
+def bind_events(elem):
+    elem.bind("click", text_click)
+    elem.bind("keyup", back_nav)
+    elem.bind("keypress", input_nav)
+
 # On page load, the following is executed
 words = None
 previous_words = list()
@@ -267,11 +303,11 @@ document['filter_pos_unknown_button'].bind("click", filter_pos_unknown)
 document['adv_help_button'].bind("click", adv_help_button)
 document['show_simple_controls_button'].bind("click", show_simple_controls_button)
 
-document['one'].bind("click", text_click)
-document['two'].bind("click", text_click)
-document['three'].bind("click", text_click)
-document['four'].bind("click", text_click)
-document['five'].bind("click", text_click)
+bind_events(document['one'])
+bind_events(document['two'])
+bind_events(document['three'])
+bind_events(document['four'])
+bind_events(document['five'])
 document['simple_filter_button'].bind("click", simple_filter_button)
 document['simple_help_button'].bind("click", simple_help_button)
 document['show_adv_controls_button'].bind("click", show_adv_controls_button)
