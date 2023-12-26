@@ -1,7 +1,7 @@
 from browser import document, alert
 from browser.html import *
 from urllib.request import urlopen
-from wordle_tool import IsLetter, word2dict, sort_letter_position_stats, letter_position_stats, letter_stats_uniq, filter_words, filter_letters_known_position, filter_letter_unknown_position, filter_all
+from wordle_tool import IsLetter, word2dict, sort_letter_position_stats, letter_position_stats, multiple_letter_stats, words_containing_letter_stats, filter_words, filter_letters_known_position, filter_letter_unknown_position, filter_all
 
 INPUT_BLACK = "inputblack"
 INPUT_YELLOW = "inputyellow"
@@ -31,20 +31,20 @@ def print_button(event):
 def print_stats_button(event):
     count = len(words)
     div = lambda x,y: x / y if y else 0
-    stats = sort_letter_position_stats(letter_position_stats(words), letter_stats_uniq(words))
+    stats = sort_letter_position_stats(letter_position_stats(words), multiple_letter_stats(words), words_containing_letter_stats(words))
     table = TABLE()
-    table <= TR(TH('Letter') + TH('Frequency') + TH('1st Freq.') + TH('2nd Freq.') + TH('3rd Freq.') + TH('4th Freq.') + TH('5th Freq.') + TH('Multi'))
+    table <= TR(TH('Letter') + TH('Frequency') + TH('1st Freq.') + TH('2nd Freq.') + TH('3rd Freq.') + TH('4th Freq.') + TH('5th Freq.') + TH('2+ Freq.'))
     for t in stats:
         if t[1] > 0:
             table <= TR(
                 TD(t[0]) +
                 TD('{:.2f}'.format((t[1]/count)*100)) +
-                TD('{:.1f}'.format(div(t[2][0], t[1])*100)) +
+                TD('{:.1f}'.format(div(t[2][0],t[1])*100)) +
                 TD('{:.1f}'.format(div(t[2][1],t[1])*100)) +
                 TD('{:.1f}'.format(div(t[2][2],t[1])*100)) +
                 TD('{:.1f}'.format(div(t[2][3],t[1])*100)) +
                 TD('{:.1f}'.format(div(t[2][4],t[1])*100)) +
-                TD('X' if sum(t[2]) > t[1] else ''))
+                TD('{:.1f}'.format(div(t[3],t[1])*100)))
     document['stats'].clear()
     document['stats'] <= table
     if document['divider'].hidden is True:

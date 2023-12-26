@@ -21,7 +21,11 @@ def read_words(file_name = "dictionary.txt"):
         words.append(line.strip())
     return words
 
-def letter_stats_uniq(words):
+def words_containing_letter_stats(words):
+    """
+    Returns a list of 26 numbers counting the number of words that contain the letter at that index.
+    (0=A, 25=Z)
+    """
     letters = [0] * 26
     for word in words:
         seen = set()
@@ -146,17 +150,52 @@ def letter_position_stats(words):
             idx += 1
     return stats
 
-def sort_letter_position_stats(pos_stats, letters):
+def multiple_letter_stats(words):
+    """
+    Counts the number of words in 'words' that contain multiple letters.
+
+    Parameters:
+    words (list): a list of words.
+
+    Returns:
+    list(int): A 26-element list (corresponding to 26 letters in the English alphabet; 0=A, 25=Z)
+    where each index contains the count of words that contain more than one occurrence of the letter.
+    """
+    letters = [0] * 26
+    for word in words:
+        d = word2dict(word)
+        for c,count in d.items():
+            if count > 1:
+                letters[ord(c) - ord('A')] +=  1
+    return letters
+
+def sort_letter_position_stats(pos_stats, multi_stats, letters):
+    """
+    Zips together the parameters and then sorts them by letter
+
+    Parameters:
+    pos_stats: list. A 26 element list of the stats for each letter position for each letter.
+    multi_stats: list. A 26 element list of the stats for multiples of each letter.
+    letters: list. A 26 element list of the count of all words containing each letter.
+
+    Returns:
+    A list of tuples of each input parameter, sorted by frequency
+    """
     chars = [chr(x + ord('A')) for x in range(26)]
-    l = list(zip(chars, letters, pos_stats))
+    l = list(zip(chars, letters, pos_stats, multi_stats))
     l.sort(key = lambda x: x[1], reverse=True)
     return l
 
 def print_letter_position_stats(stats, count, all=False):
+    """
+    Pretty prints the output from `sort_letter_position_stats`.
+    """
     div = lambda x,y: x / y if y else 0
+    print("{: <11} | {: >8}{: >8}{: >8}{: >8}{: >8}{: >8}".format('Letter Freq', '1st', '2nd', '3rd', '4th', '5th', 'multi'))
+    print('_' * 12 + '|' + '_' * ((8 * 6) + 1))
     for t in stats:
         if all or t[1] > 0:
-            print("{}: {: >6.2f}% -> {: >8.1f}{: >8.1f}{: >8.1f}{: >8.1f}{: >8.1f} {: >8}".format(t[0], (t[1]/count)*100, div(t[2][0], t[1])*100, div(t[2][1],t[1])*100, div(t[2][2],t[1])*100, div(t[2][3],t[1])*100, div(t[2][4],t[1])*100, "multi" if sum(t[2]) > t[1] else ''))
+            print("{}: {: >6.2f}%  | {: >8.1f}{: >8.1f}{: >8.1f}{: >8.1f}{: >8.1f}{: >8.1f}".format(t[0], (t[1]/count)*100, div(t[2][0], t[1])*100, div(t[2][1],t[1])*100, div(t[2][2],t[1])*100, div(t[2][3],t[1])*100, div(t[2][4],t[1])*100, div(t[3],t[1])*100))
     print("total: {} words".format(count))
 
 def print_help():
@@ -256,7 +295,7 @@ if __name__ == '__main__':
             if words == None:
                 print("Need to run `load` before `{}` command is valid.".format(cmd))
                 continue
-            stats = sort_letter_position_stats(letter_position_stats(words), letter_stats_uniq(words))
+            stats = sort_letter_position_stats(letter_position_stats(words), multiple_letter_stats(words), words_containing_letter_stats(words))
             print_letter_position_stats(stats, len(words), all)
         elif cmd == 'undo':
             if previous_words == None:
