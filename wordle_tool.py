@@ -169,22 +169,54 @@ def multiple_letter_stats(words):
                 letters[ord(c) - ord('A')] +=  1
     return letters
 
-def sort_letter_position_stats(pos_stats, multi_stats, letters):
+def sort_letter_position_stats(pos_stats, multi_stats, letter_stats):
     """
     Zips together the parameters and then sorts them by letter
 
     Parameters:
     pos_stats: list. A 26 element list of the stats for each letter position for each letter.
     multi_stats: list. A 26 element list of the stats for multiples of each letter.
-    letters: list. A 26 element list of the count of all words containing each letter.
+    letter_stats: list. A 26 element list of the count of all words containing each letter.
 
     Returns:
     A list of tuples of each input parameter, sorted by frequency
     """
     chars = [chr(x + ord('A')) for x in range(26)]
-    l = list(zip(chars, letters, pos_stats, multi_stats))
+    l = list(zip(chars, letter_stats, pos_stats, multi_stats))
     l.sort(key = lambda x: x[1], reverse=True)
     return l
+
+def calculate_and_sort_stats(words):
+    """
+    Calculates the stats in one pass, reducing computation time.
+    This does the work of `letter_position_stats()`, `multiple_letter_stats()`, and `words_containing_letter_stats()`.
+    Then zips and sorts the stats for output.
+
+    Parameter:
+    words: list. A list of words to calculate stats on.
+
+    Returns:
+    List, the output of `sort_letter_position_stats()`
+    """
+    words_with_letter = [0] * 26
+    words_with_multiple_letter = [0] * 26
+    letter_position_stats = [[0,0,0,0,0] for x in range(26)]
+    for word in words:
+        word_dict = dict()
+        idx = 0
+        for c in word:
+            letter_position_stats[ord(c) - ord('A')][idx] += 1
+            idx += 1
+            if c not in word_dict.keys():
+                words_with_letter[ord(c) - ord('A')] +=  1
+                word_dict[c] = 1
+            else:
+                word_dict[c] += 1
+        for c,count in word_dict.items():
+            if count > 1:
+                words_with_multiple_letter[ord(c) - ord('A')] +=  1
+
+    return sort_letter_position_stats(letter_position_stats, words_with_multiple_letter, words_with_letter)
 
 def print_letter_position_stats(stats, count, all=False):
     """
@@ -295,7 +327,7 @@ if __name__ == '__main__':
             if words == None:
                 print("Need to run `load` before `{}` command is valid.".format(cmd))
                 continue
-            stats = sort_letter_position_stats(letter_position_stats(words), multiple_letter_stats(words), words_containing_letter_stats(words))
+            stats = calculate_and_sort_stats(words)
             print_letter_position_stats(stats, len(words), all)
         elif cmd == 'undo':
             if previous_words == None:
